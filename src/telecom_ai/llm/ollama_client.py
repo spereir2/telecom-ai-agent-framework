@@ -35,7 +35,9 @@ class OllamaClient:
                 {"role": "user", "content": user},
             ],
         }
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=self.timeout, write=30.0, pool=5.0)
+        ) as client:
             resp = await client.post(f"{self.host}/api/chat", json=payload)
         if resp.status_code != 200:
             raise OllamaError(f"Ollama returned {resp.status_code}: {resp.text}")

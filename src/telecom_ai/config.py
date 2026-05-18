@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "qwen2.5:7b"
-    request_timeout_seconds: float = 60.0
+    request_timeout_seconds: float = 300.0
     max_retries: int = 2
 
 

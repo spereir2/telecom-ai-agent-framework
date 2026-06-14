@@ -1,19 +1,16 @@
 import json
-from typing import TypeVar
 
 from pydantic import BaseModel, ValidationError
 
 from telecom_ai.config import settings
 from telecom_ai.llm.ollama_client import OllamaClient, OllamaError
 
-T = TypeVar("T", bound=BaseModel)
-
 
 class StructuredOutputError(RuntimeError):
     pass
 
 
-async def coerce_to_model(
+async def coerce_to_model[T: BaseModel](
     model_cls: type[T],
     system: str,
     user: str,

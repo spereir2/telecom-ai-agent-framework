@@ -1,4 +1,6 @@
 import json
+from collections.abc import Callable
+from typing import Any
 
 import httpx
 import pytest
@@ -8,7 +10,7 @@ from telecom_ai.llm.structured import StructuredOutputError, coerce_to_model
 from telecom_ai.schemas import ServiceOrder, ServiceType
 
 
-def _valid_order_payload() -> dict:
+def _valid_order_payload() -> dict[str, Any]:
     return {
         "customer": {"full_name": "Jane Doe", "customer_type": "residential"},
         "service_address": {
@@ -35,7 +37,7 @@ def _mock_transport(responses: list[str]) -> httpx.MockTransport:
 
 
 @pytest.fixture
-def patched_client(monkeypatch: pytest.MonkeyPatch):
+def patched_client(monkeypatch: pytest.MonkeyPatch) -> Callable[[list[str]], OllamaClient]:
     def install(responses: list[str]) -> OllamaClient:
         transport = _mock_transport(responses)
 
@@ -51,19 +53,23 @@ def patched_client(monkeypatch: pytest.MonkeyPatch):
     return install
 
 
-async def test_generate_json_success(patched_client) -> None:
+async def test_generate_json_success(patched_client: Callable[[list[str]], OllamaClient]) -> None:
     client = patched_client([json.dumps(_valid_order_payload())])
     raw = await client.generate_json(system="sys", user="usr")
     assert json.loads(raw)["customer"]["full_name"] == "Jane Doe"
 
 
-async def test_coerce_to_model_succeeds_first_try(patched_client) -> None:
+async def test_coerce_to_model_succeeds_first_try(
+    patched_client: Callable[[list[str]], OllamaClient],
+) -> None:
     client = patched_client([json.dumps(_valid_order_payload())])
     order = await coerce_to_model(ServiceOrder, system="sys", user="usr", client=client)
     assert order.product.service_type is ServiceType.FTTH_RESIDENTIAL
 
 
-async def test_coerce_to_model_retries_on_invalid_json(patched_client) -> None:
+async def test_coerce_to_model_retries_on_invalid_json(
+    patched_client: Callable[[list[str]], OllamaClient],
+) -> None:
     client = patched_client(["not json", json.dumps(_valid_order_payload())])
     order = await coerce_to_model(
         ServiceOrder, system="sys", user="usr", client=client, max_retries=1
@@ -71,12 +77,12 @@ async def test_coerce_to_model_retries_on_invalid_json(patched_client) -> None:
     assert order.customer.full_name == "Jane Doe"
 
 
-async def test_coerce_to_model_exhausts_retries(patched_client) -> None:
+async def test_coerce_to_model_exhausts_retries(
+    patched_client: Callable[[list[str]], OllamaClient],
+) -> None:
     client = patched_client(["not json", "still not json"])
     with pytest.raises(StructuredOutputError):
-        await coerce_to_model(
-            ServiceOrder, system="sys", user="usr", client=client, max_retries=1
-        )
+        await coerce_to_model(ServiceOrder, system="sys", user="usr", client=client, max_retries=1)
 
 
 async def test_ollama_error_on_non_200(monkeypatch: pytest.MonkeyPatch) -> None:

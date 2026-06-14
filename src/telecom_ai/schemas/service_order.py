@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -9,7 +9,7 @@ from telecom_ai.schemas.customer import Customer
 from telecom_ai.schemas.product import Product
 
 
-class OrderState(str, Enum):
+class OrderState(StrEnum):
     DRAFT = "draft"
     ACKNOWLEDGED = "acknowledged"
     IN_PROGRESS = "in_progress"
@@ -27,4 +27,4 @@ class ServiceOrder(BaseModel):
     product: Product
     requested_completion_date: datetime | None = None
     notes: str | None = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

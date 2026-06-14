@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, EmailStr, Field
 
 
-class CustomerType(str, Enum):
+class CustomerType(StrEnum):
     RESIDENTIAL = "residential"
     BUSINESS = "business"
 

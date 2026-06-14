@@ -1,16 +1,16 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field, field_validator
 
 
-class ServiceType(str, Enum):
+class ServiceType(StrEnum):
     FTTH_RESIDENTIAL = "ftth_residential"
     FTTH_BUSINESS = "ftth_business"
     FTTC = "fttc"
     LEASED_LINE = "leased_line"
 
 
-class BandwidthUnit(str, Enum):
+class BandwidthUnit(StrEnum):
     MBPS = "Mbps"
     GBPS = "Gbps"
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from pydantic import ValidationError
 
@@ -13,7 +15,7 @@ from telecom_ai.schemas import (
 )
 
 
-def _valid_order_kwargs() -> dict:
+def _valid_order_kwargs() -> dict[str, Any]:
     return {
         "customer": Customer(full_name="Jane Doe"),
         "service_address": ServiceAddress(

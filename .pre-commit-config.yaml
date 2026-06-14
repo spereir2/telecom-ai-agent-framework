@@ -17,6 +17,15 @@ repos:
     rev: v1.11.1
     hooks:
       - id: mypy
-        additional_dependencies: [pydantic>=2.7, pydantic-settings>=2.3, types-requests]
-        args: [--config-file=pyproject.toml]
+        additional_dependencies:
+          - pydantic>=2.7
+          - pydantic-settings>=2.3
+          - types-requests
+          - httpx
+          - pytest
+          - typer
+          - rich
+        args:
+          - --config-file=pyproject.toml
+          - --enable-incomplete-feature=NewGenericSyntax
         pass_filenames: false

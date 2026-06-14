@@ -5,7 +5,7 @@ import asyncio
 import json
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -98,7 +98,7 @@ async def run(model: str) -> dict[str, Any]:
 
     summary = {
         "model": model,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "n_cases": len(results),
         "schema_validity_pct": round(schema_valid_pct, 2),
         "field_accuracy_pct": round(field_accuracy_pct, 2),

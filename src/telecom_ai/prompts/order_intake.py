@@ -53,10 +53,6 @@ FEW_SHOT_EXAMPLES = [
 
 def build_user_prompt(natural_language_order: str) -> str:
     examples = "\n\n".join(
-        f"Example input: {ex['input']}\nExample output: {ex['output']}"
-        for ex in FEW_SHOT_EXAMPLES
+        f"Example input: {ex['input']}\nExample output: {ex['output']}" for ex in FEW_SHOT_EXAMPLES
     )
-    return (
-        f"{examples}\n\n"
-        f"Now convert this request:\n{natural_language_order}"
-    )
+    return f"{examples}\n\nNow convert this request:\n{natural_language_order}"
